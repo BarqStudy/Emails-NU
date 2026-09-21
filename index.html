@@ -1,205 +1,272 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة دليل جامعة نجران الأكاديمي</title>
+    <title>دليل أعضاء هيئة التدريس</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        barqDark: '#070b14',
+                        barqCardDark: 'rgba(15, 23, 42, 0.75)',
+                        barqCardLight: '#ffffff',
+                        barqBlue: '#3b82f6',
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #0b0f19; color: #f8fafc; }
-        .glass-card { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); }
-        .hero-glow { background: radial-gradient(circle at 50% -20%, rgba(59, 130, 246, 0.25), transparent 70%); }
+        body { font-family: 'Cairo', sans-serif; }
+        .glass-card { backdrop-filter: blur(12px); transition: all 0.3s ease; }
+        .dark .glass-card { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(59, 130, 246, 0.15); }
+        .light .glass-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        
+        /* تفعيل حركات الأيقونات التفاعلية */
+        .interactive-icon { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .interactive-icon:hover { transform: scale(1.15) rotate(5deg); }
+        
+        /* تأثير النيون الشعار */
+        .logo-glow { filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5)); animation: pulseGlow 3s infinite; }
+        @keyframes pulseGlow {
+            0%, 100% { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4)); }
+            50% { filter: drop-shadow(0 0 18px rgba(59, 130, 246, 0.8)); }
+        }
     </style>
 </head>
-<body class="min-h-screen pb-24 hero-glow">
+<body class="min-h-screen pb-28 bg-slate-50 dark:bg-barqDark text-slate-800 dark:text-slate-100 transition-colors duration-300">
 
-    <!-- محتوى الصفحة الرئيسية -->
-    <div id="page-home" class="max-w-md mx-auto p-4 space-y-6">
+    <!-- زر تبديل الوضع (ليلي / نهاري) -->
+    <div class="absolute top-4 left-4 z-50">
+        <button onclick="toggleTheme()" class="p-2.5 rounded-2xl glass-card text-lg interactive-icon shadow-md">
+            <span id="themeIcon">🌙</span>
+        </button>
+    </div>
+
+    <!-- 1. الشاشة الرئيسية -->
+    <div id="page-home" class="max-w-md mx-auto p-4 space-y-6 pt-6">
         
-        <!-- الترويسة وشعار الجامعة -->
-        <div class="text-center pt-4 space-y-2">
-            <div class="inline-flex p-3 bg-blue-600/20 border border-blue-500/30 rounded-2xl shadow-inner text-3xl">
-                🎓
+        <!-- الشعار واسم الطالب -->
+        <div class="text-center space-y-3">
+            <div class="inline-block p-4 rounded-3xl glass-card logo-glow">
+                <!-- الأيقونة المستوحاة من الشعار الرسمي -->
+                <svg class="w-12 h-12 text-blue-500 interactive-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                </svg>
             </div>
-            <h1 id="userName" class="text-xl font-bold">أهلاً، زائرنا الكريم</h1>
-            <div class="inline-block px-4 py-1.5 rounded-full bg-blue-900/40 border border-blue-500/30 text-blue-300 text-xs font-semibold">
-                كلية الهندسة الحاسوبية
+            <h1 id="userName" class="text-xl font-bold tracking-tight">أهلاً، زائرنا الكريم</h1>
+            <div class="inline-block px-4 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 text-xs font-bold">
+                جامعة نجران
             </div>
         </div>
 
-        <!-- بطاقة عداد مرات البحث (بديل شعلة الاستمرارية) -->
-        <div class="glass-card rounded-3xl p-5 shadow-lg relative overflow-hidden flex items-center justify-between">
+        <!-- بطاقة عدد مرات البحث -->
+        <div class="glass-card rounded-3xl p-5 shadow-lg flex items-center justify-between">
             <div>
-                <p class="text-xs text-slate-400 font-medium mb-1">إجمالي عمليات البحث</p>
-                <h2 id="searchCountDisplay" class="text-3xl font-black text-blue-400">0</h2>
-                <p class="text-[11px] text-slate-400 mt-1">عمليات بحث ناجحة قمت بها في النظام</p>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">عدد مرات البحث عن دكتور</p>
+                <h2 id="searchCountDisplay" class="text-3xl font-black text-blue-500">0</h2>
+                <p class="text-[10px] text-slate-400 mt-1">عمليات البحث النشطة في المنصة</p>
             </div>
-            <div class="w-14 h-14 rounded-2xl bg-blue-600/20 border border-blue-500/30 flex items-center justify-center text-2xl shadow-inner">
+            <div class="w-14 h-14 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-2xl interactive-icon">
                 🔍
             </div>
         </div>
 
-        <!-- أقسام البوت (بالترتيب المطلوب تماماً) -->
+        <!-- الأقسام بالترتيب المطلوب -->
         <div class="space-y-3">
             
-            <!-- 1. خانة البحث -->
+            <!-- خانة البحث -->
             <div class="relative">
                 <input type="text" id="mainSearchInput" oninput="handleInstantSearch(this.value)" placeholder="ابحث باسم الدكتور، الكلية، أو التخصص..." 
-                    class="w-full p-4 pr-12 rounded-2xl bg-slate-900/80 border border-slate-700/60 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium shadow-sm">
-                <span class="absolute right-4 top-4 text-xl text-slate-400">🔎</span>
+                    class="w-full p-4 pr-12 rounded-2xl glass-card focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium shadow-sm">
+                <span class="absolute right-4 top-4 text-xl interactive-icon">🔎</span>
             </div>
 
-            <!-- نتائج البحث السريع -->
+            <!-- نتائج البحث -->
             <div id="searchResults" class="space-y-2 max-h-60 overflow-y-auto"></div>
 
-            <!-- 2. مستطيلان صغيران بجانب بعض (عمداء الكليات وأعضاء التدريس) -->
+            <!-- مستطيلان صغيران بجانب بعض (عمداء الكليات وأعضاء التدريس) -->
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="openCategory('head')" class="glass-card p-4 rounded-2xl text-right hover:border-blue-500/50 transition flex flex-col justify-between h-28 shadow-sm group">
-                    <span class="text-2xl">👔</span>
+                    <span class="text-2xl interactive-icon">👔</span>
                     <div>
-                        <h3 class="font-bold text-sm text-slate-200 group-hover:text-blue-400 transition">عمداء الكليات</h3>
-                        <p class="text-[11px] text-slate-400">تصفح قيادات الكليات</p>
+                        <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-500 transition">عمداء الكليات</h3>
+                        <p class="text-[11px] text-slate-400">تصفح القيادات</p>
                     </div>
                 </button>
                 <button onclick="openCategory('doctor')" class="glass-card p-4 rounded-2xl text-right hover:border-blue-500/50 transition flex flex-col justify-between h-28 shadow-sm group">
-                    <span class="text-2xl">👨‍🏫</span>
+                    <span class="text-2xl interactive-icon">👨‍🏫</span>
                     <div>
-                        <h3 class="font-bold text-sm text-slate-200 group-hover:text-blue-400 transition">أعضاء التدريس</h3>
-                        <p class="text-[11px] text-slate-400">دليل الأساتذة والدكاترة</p>
+                        <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-500 transition">أعضاء التدريس</h3>
+                        <p class="text-[11px] text-slate-400">دليل الأساتذة</p>
                     </div>
                 </button>
             </div>
 
-            <!-- 3. مستطيل عريض لطلب إضافة إيميل -->
-            <a href="https://t.me/k_sic" target="_blank" class="glass-card p-4 rounded-2xl flex items-center justify-between hover:border-blue-500/50 transition shadow-sm block">
+            <!-- مستطيل عريض لطلب إضافة إيميل -->
+            <a href="https://t.me/k_sic" target="_blank" class="glass-card p-4 rounded-2xl flex items-center justify-between hover:border-blue-500/50 transition shadow-sm block group">
                 <div class="flex items-center gap-3">
-                    <span class="text-2xl bg-blue-600/20 p-2.5 rounded-xl border border-blue-500/30">✉️</span>
+                    <span class="text-2xl bg-blue-500/10 p-2.5 rounded-xl border border-blue-500/20 interactive-icon">✉️</span>
                     <div>
-                        <h3 class="font-bold text-sm text-slate-200">طلب إضافة إيميل</h3>
-                        <p class="text-[11px] text-slate-400">هل بريدك غير مسجل؟ اطلب إدراجه</p>
+                        <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-500 transition">طلب إضافة إيميل</h3>
+                        <p class="text-[11px] text-slate-400">أضف بريدك غير المسجل</p>
                     </div>
                 </div>
-                <span class="text-slate-400 text-sm">➔</span>
+                <span class="text-slate-400 text-sm interactive-icon">➔</span>
             </a>
 
-            <!-- 4. مستطيل عريض قسم المطور -->
-            <a href="https://t.me/NU_ksa" target="_blank" class="glass-card p-4 rounded-2xl flex items-center justify-between hover:border-blue-500/50 transition shadow-sm block">
+            <!-- مستطيل عريض قسم المطور -->
+            <button onclick="switchTab('developer')" class="glass-card p-4 rounded-2xl flex items-center justify-between hover:border-blue-500/50 transition shadow-sm w-full text-right group">
                 <div class="flex items-center gap-3">
-                    <span class="text-2xl bg-blue-600/20 p-2.5 rounded-xl border border-blue-500/30">👨‍💻</span>
+                    <span class="text-2xl bg-blue-500/10 p-2.5 rounded-xl border border-blue-500/20 interactive-icon">👨‍💻</span>
                     <div>
-                        <h3 class="font-bold text-sm text-slate-200">المطور ومجموعة الجامعة</h3>
-                        <p class="text-[11px] text-slate-400">للاستفسارات والملاحظات البرمجية</p>
+                        <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200 group-hover:text-blue-500 transition">المطور</h3>
+                        <p class="text-[11px] text-slate-400">معلومات وتفاصيل المطور</p>
                     </div>
                 </div>
-                <span class="text-slate-400 text-sm">➔</span>
-            </a>
+                <span class="text-slate-400 text-sm interactive-icon">➔</span>
+            </button>
 
         </div>
     </div>
 
-    <!-- صفحة لوحة الشرف (ترتيب الصدارة) -->
-    <div id="page-leaderboard" class="max-w-md mx-auto p-4 space-y-4 hidden">
-        <div class="text-center pt-4">
+    <!-- صفحة المطور -->
+    <div id="page-developer" class="max-w-md mx-auto p-4 space-y-6 hidden pt-10">
+        <div class="text-center space-y-4">
+            <div class="w-20 h-20 mx-auto rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-4xl interactive-icon">
+                👨‍💻
+            </div>
+            <h2 class="text-xl font-bold">عن المنصة والمطور</h2>
+            <div class="glass-card p-6 rounded-3xl text-sm leading-relaxed space-y-4 shadow-lg text-slate-600 dark:text-slate-300">
+                <p>تم تطوير منصة <strong>دليل أعضاء هيئة التدريس</strong> من قبل إدارة جامعة نجران لتسهيل الوصول إلى البريد الإلكتروني والبيانات الأكاديمية.</p>
+                <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <p class="text-xs text-slate-400 mb-1">للاستفسارات والمقترحات التواصل مع المطور عبر تليجرام:</p>
+                    <a href="https://t.me/Riman_1ME" target="_blank" class="inline-block px-4 py-2 rounded-xl bg-blue-500 text-white font-bold text-xs shadow hover:bg-blue-600 transition">
+                        @Riman_1ME 🚀
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- صفحة لوحة الشرف -->
+    <div id="page-leaderboard" class="max-w-md mx-auto p-4 space-y-4 hidden pt-6">
+        <div class="text-center pt-2">
             <h2 class="text-xl font-bold">🏆 لوحة الشرف</h2>
-            <p class="text-xs text-slate-400">أكثر 10 مستخدمين نشاطاً في البحث عن الإيميلات والدكاترة</p>
+            <p class="text-xs text-slate-400">أكثر المستخدمين تفاعلاً وبحثاً في المنصة</p>
         </div>
         <div id="leaderboardList" class="space-y-2"></div>
     </div>
 
-    <!-- صفحة لوحة تحكم الإدارة (Admin Panel) -->
-    <div id="page-admin" class="max-w-md mx-auto p-4 space-y-4 hidden">
+    <!-- لوحة تحكم الإدارة -->
+    <div id="page-admin" class="max-w-md mx-auto p-4 space-y-4 hidden pt-6">
         <div class="text-center pt-2">
-            <h2 class="text-xl font-bold text-blue-400">⚙️ لوحة تحكم الإدارة</h2>
-            <p class="text-xs text-slate-400">إدارة الدكاترة، الكليات، والإحصائيات</p>
+            <h2 class="text-xl font-bold text-blue-500">⚙️ لوحة تحكم الإدارة</h2>
+            <p class="text-xs text-slate-400">نظام الإحصائيات، الحظر، ورفع الإكسل</p>
         </div>
 
-        <!-- إحصائيات سريعة -->
+        <!-- إحصائيات النظام -->
         <div class="grid grid-cols-2 gap-3 text-center">
-            <div class="glass-card p-3 rounded-2xl">
+            <div class="glass-card p-4 rounded-2xl">
                 <span class="text-xs text-slate-400">إجمالي الدكاترة</span>
-                <h3 id="adminTotalDocs" class="text-lg font-bold text-blue-400">0</h3>
+                <h3 id="adminTotalDocs" class="text-lg font-bold text-blue-500">0</h3>
             </div>
-            <div class="glass-card p-3 rounded-2xl">
-                <span class="text-xs text-slate-400">إجمالي الكليات</span>
-                <h3 id="adminTotalColleges" class="text-lg font-bold text-blue-400">0</h3>
+            <div class="glass-card p-4 rounded-2xl">
+                <span class="text-xs text-slate-400">المستخدمين المحظورين</span>
+                <h3 id="adminTotalBans" class="text-lg font-bold text-red-500">0</h3>
             </div>
         </div>
 
-        <!-- إضافة دكتور فردي -->
+        <!-- نظام رفع ملفات إكسل -->
         <div class="glass-card p-4 rounded-2xl space-y-3">
-            <h3 class="font-bold text-sm text-slate-200">➕ إضافة عضو جديد</h3>
-            <input type="text" id="newDocName" placeholder="الاسم الكامل" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs">
-            <input type="email" id="newDocEmail" placeholder="البريد الإلكتروني" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs">
-            <input type="text" id="newDocCollege" placeholder="اسم الكلية" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs">
-            <input type="text" id="newDocMajor" placeholder="التخصص" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs">
-            <button onclick="addNewDoctor()" class="w-full py-3 rounded-xl bg-blue-600 hover:bg-blue-500 font-bold text-xs text-white shadow">حفظ وإضافة للنظام</button>
+            <h3 class="font-bold text-sm flex items-center gap-2">
+                <span>📁</span> إضافة دكاترة عبر ملف إكسل (.xlsx)
+            </h3>
+            <input type="file" id="excelFile" accept=".xlsx, .xls" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer">
+            <button onclick="handleExcelUpload()" class="w-full py-2.5 rounded-xl bg-blue-500 text-white font-bold text-xs shadow hover:bg-blue-600 transition">
+                رفع ومعالجة الملف
+            </button>
         </div>
 
-        <!-- إضافة جماعية (نصوص) -->
+        <!-- نظام الحظر -->
         <div class="glass-card p-4 rounded-2xl space-y-3">
-            <h3 class="font-bold text-sm text-slate-200">📝 إضافة جماعية (نص)</h3>
-            <textarea id="bulkText" placeholder="الاسم - الإيميل - الرتبة - الكلية - التخصص (عضو بكل سطر)" rows="3" class="w-full p-3 rounded-xl bg-slate-900 border border-slate-700 text-xs"></textarea>
-            <button onclick="addBulkDoctors()" class="w-full py-3 rounded-xl bg-blue-600/30 border border-blue-500/50 hover:bg-blue-600/50 font-bold text-xs text-white">معالجة وإضافة النصوص</button>
+            <h3 class="font-bold text-sm flex items-center gap-2">
+                <span>🚫</span> حظر مستخدم برقم ID
+            </h3>
+            <div class="flex gap-2">
+                <input type="text" id="banUserId" placeholder="أدخل ID المستخدم" class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs">
+                <button onclick="banUser()" class="px-4 py-2.5 rounded-xl bg-red-500 text-white font-bold text-xs">حظر</button>
+            </div>
         </div>
     </div>
 
-    <!-- نافذة منبثقة لعرض الكاتيجوري (دكاترة أو عمداء) -->
-    <div id="modalCategory" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
-        <div class="bg-slate-900 border-t border-slate-800 rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto space-y-4">
+    <!-- نافذة منبثقة لعرض القوائم (دكاترة أو عمداء) -->
+    <div id="modalCategory" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
+        <div class="glass-card bg-slate-900 border-t border-slate-800 rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
                 <h3 id="modalTitle" class="font-bold text-base">القائمة</h3>
-                <button onclick="closeModal()" class="text-slate-400 font-bold text-lg">✕</button>
+                <button onclick="closeModal()" class="text-slate-400 font-bold text-lg interactive-icon">✕</button>
             </div>
             <div id="modalList" class="space-y-3"></div>
         </div>
     </div>
 
-    <!-- شريط التنقل السفلي (Menu Bar) -->
-    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto glass-card border-t border-slate-800 p-2 flex justify-around items-center z-40 rounded-t-3xl shadow-2xl">
-        <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-blue-400 transition p-2">
+    <!-- شريط التنقل السفلي (Menu Bar) العائم المطور -->
+    <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto glass-card p-2.5 flex justify-around items-center z-40 rounded-3xl shadow-2xl border border-slate-700/30">
+        <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-blue-500 transition p-2 interactive-icon">
             <span class="text-lg">🏠</span>
             <span class="text-[10px] font-bold">الرئيسية</span>
         </button>
-        <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition p-2">
+        <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon">
             <span class="text-lg">🏆</span>
-            <span class="text-[10px] font-bold">ترتيب الصدارة</span>
+            <span class="text-[10px] font-bold">الشرف</span>
         </button>
-        <button onclick="switchTab('admin')" id="nav-admin" class="flex flex-col items-center gap-1 text-slate-400 hover:text-white transition p-2">
+        <button onclick="switchTab('admin')" id="nav-admin" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon">
             <span class="text-lg">⚙️</span>
             <span class="text-[10px] font-bold">الإدارة</span>
+        </button>
+        <button onclick="switchTab('developer')" id="nav-developer" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon">
+            <span class="text-lg">👨‍💻</span>
+            <span class="text-[10px] font-bold">المطور</span>
         </button>
     </nav>
 
     <script>
-        // إعدادات التيليجرام WebApp والبيانات الافتراضية
-        let tg = window.Telegram ? window.Telegram.WebApp : null;
+        // إعدادات التيليجرام والبيانات
+        let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         if (tg) tg.expand();
 
         let currentUser = {
             id: tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? tg.initDataUnsafe.user.id : "user_" + Math.floor(Math.random()*1000),
-            name: tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? (tg.initDataUnsafe.user.first_name + (tg.initDataUnsafe.user.last_name ? " " + tg.initDataUnsafe.user.last_name : "")) : "عبدالرحمن البكندلي"
+            name: tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? (tg.initDataUnsafe.user.first_name + (tg.initDataUnsafe.user.last_name ? " " + tg.initDataUnsafe.user.last_name : "")) : "طالب نجران"
         };
+
+        // التحقق من الحظر
+        let bannedUsers = JSON.parse(localStorage.getItem('najran_banned')) || [];
+        if (bannedUsers.includes(currentUser.id.toString())) {
+            document.body.innerHTML = `<div class="flex items-center justify-center h-screen text-center p-6"><h1 class="text-red-500 font-bold text-lg">عفواً، تم حظرك من استخدام هذه المنصة.</h1></div>`;
+            throw new Error('User Banned');
+        }
 
         document.getElementById('userName').innerText = `أهلاً، ${currentUser.name}`;
 
-        // تخزين البيانات محلياً مع بيانات تجريبية افتراضية في حال عدم توفر ملفات الـ JSON
         let doctors = JSON.parse(localStorage.getItem('najran_doctors')) || [
             { id: "1", name: "د. أحمد القحطاني", emails: [{email: "ahmad@nu.edu.sa", label: "الرئيسي"}], college: "كلية الهندسة", major: "هندسة مدنية", rank: "أستاذ مشارك", category: "doctor" },
             { id: "2", name: "أ.د. محمد اليامي", emails: [{email: "alyami@nu.edu.sa", label: "الرئيسي"}], college: "كلية علوم الحاسب", major: "أمن سيبراني", rank: "عميد الكلية", category: "head" },
             { id: "3", name: "د. خالد الشهراني", emails: [{email: "khaled@nu.edu.sa", label: "الرئيسي"}], college: "كلية الطب", major: "جراحة عامة", rank: "أستاذ مساعد", category: "doctor" }
         ];
 
-        let colleges = JSON.parse(localStorage.getItem('najran_colleges')) || [
-            { name: "كلية الهندسة" }, { name: "كلية علوم الحاسب" }, { name: "كلية الطب" }
-        ];
-
         let usersStats = JSON.parse(localStorage.getItem('najran_users_stats')) || {};
         if (!usersStats[currentUser.id]) {
             usersStats[currentUser.id] = { name: currentUser.name, searches: 0 };
         }
-        
         updateSearchCountUI();
 
         function updateSearchCountUI() {
@@ -208,14 +275,40 @@
             localStorage.setItem('najran_doctors', JSON.stringify(doctors));
         }
 
-        // التنقل بين التبويبات السفلية
+        // التبديل بين الأوضاع (ليلي / نهاري)
+        function toggleTheme() {
+            let html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                html.classList.add('light');
+                document.getElementById('themeIcon').innerText = '☀️';
+                localStorage.setItem('theme', 'light');
+            } else {
+                html.classList.remove('light');
+                html.classList.add('dark');
+                document.getElementById('themeIcon').innerText = '🌙';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+            document.documentElement.classList.add('light');
+            document.getElementById('themeIcon').innerText = '☀️';
+        }
+
+        // التنقل بين الشاشات
         function switchTab(tab) {
-            ['home', 'leaderboard', 'admin'].forEach(t => {
-                document.getElementById(`page-${t}`).classList.add('hidden');
-                document.getElementById(`nav-${t}`).className = "flex flex-col items-center gap-1 text-slate-400 hover:text-white transition p-2";
+            ['home', 'leaderboard', 'admin', 'developer'].forEach(t => {
+                let el = document.getElementById(`page-${t}`);
+                if(el) el.classList.add('hidden');
+                let nav = document.getElementById(`nav-${t}`);
+                if(nav) nav.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon";
             });
-            document.getElementById(`page-${tab}`).classList.remove('hidden');
-            document.getElementById(`nav-${tab}`).className = "flex flex-col items-center gap-1 text-blue-400 transition p-2";
+            let targetPage = document.getElementById(`page-${tab}`);
+            if(targetPage) targetPage.classList.remove('hidden');
+            let targetNav = document.getElementById(`nav-${tab}`);
+            if(targetNav) targetNav.className = "flex flex-col items-center gap-1 text-blue-500 transition p-2 interactive-icon";
 
             if (tab === 'leaderboard') renderLeaderboard();
             if (tab === 'admin') updateAdminStats();
@@ -233,23 +326,23 @@
             let matched = doctors.filter(d => d.name.includes(query) || (d.college && d.college.includes(query)) || (d.major && d.major.includes(query)));
             
             if (matched.length === 0) {
-                container.innerHTML = `<div class="p-3 bg-slate-900 rounded-xl text-xs text-slate-400 text-center">لا توجد نتائج مطابقة</div>`;
+                container.innerHTML = `<div class="p-3 glass-card rounded-xl text-xs text-slate-400 text-center">لا توجد نتائج مطابقة</div>`;
                 return;
             }
 
             matched.forEach(doc => {
                 let card = document.createElement('div');
-                card.className = "p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-1 shadow-sm";
+                card.className = "p-3 glass-card rounded-xl space-y-1 shadow-sm";
                 card.innerHTML = `
-                    <div class="font-bold text-sm text-slate-200">${doc.name}</div>
+                    <div class="font-bold text-sm text-slate-700 dark:text-slate-200">${doc.name}</div>
                     <div class="text-[11px] text-slate-400">${doc.college || ''} ${doc.major ? ' - ' + doc.major : ''}</div>
-                    <a href="mailto:${doc.emails[0]?.email}" class="text-xs text-blue-400 underline font-mono block pt-1">${doc.emails[0]?.email || 'بدون إيميل'}</a>
+                    <a href="mailto:${doc.emails[0]?.email}" class="text-xs text-blue-500 underline font-mono block pt-1">${doc.emails[0]?.email || 'بدون إيميل'}</a>
                 `;
                 container.appendChild(card);
             });
         }
 
-        // فتح نافذة الكاتيجوري (دكاترة أو عمداء)
+        // فتح نافذة القوائم
         function openCategory(cat) {
             let modal = document.getElementById('modalCategory');
             let title = document.getElementById('modalTitle');
@@ -260,11 +353,11 @@
 
             let filtered = doctors.filter(d => d.category === cat);
             if (filtered.length === 0) {
-                list.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">لا توجد بيانات مسجلة في هذا القسم</p>`;
+                list.innerHTML = `<p class="text-center text-xs text-slate-400 py-6">لا توجد بيانات مسجلة</p>`;
             } else {
                 filtered.forEach(doc => {
                     let item = document.createElement('div');
-                    item.className = "p-3 bg-slate-800/60 rounded-xl border border-slate-700/50 space-y-1";
+                    item.className = "p-3 bg-slate-800/40 rounded-xl border border-slate-700/30 space-y-1";
                     item.innerHTML = `
                         <div class="font-bold text-sm">${doc.name}</div>
                         <div class="text-xs text-slate-400">${doc.college || ''} ${doc.major ? ' | ' + doc.major : ''}</div>
@@ -284,7 +377,6 @@
         function renderLeaderboard() {
             let list = document.getElementById('leaderboardList');
             list.innerHTML = '';
-            
             let sortedUsers = Object.entries(usersStats).sort((a,b) => b[1].searches - a[1].searches);
             
             sortedUsers.slice(0, 10).forEach(([uid, data], index) => {
@@ -292,56 +384,73 @@
                 row.className = "glass-card p-3 rounded-2xl flex justify-between items-center text-xs";
                 row.innerHTML = `
                     <div class="flex items-center gap-3">
-                        <span class="w-6 h-6 rounded-full bg-blue-600/30 flex items-center justify-center font-bold text-blue-400">${index+1}</span>
-                        <span class="font-bold text-slate-200">${data.name}</span>
+                        <span class="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center font-bold text-blue-500">${index+1}</span>
+                        <span class="font-bold text-slate-700 dark:text-slate-200">${data.name}</span>
                     </div>
-                    <span class="font-bold text-blue-400 bg-blue-950 px-2.5 py-1 rounded-lg border border-blue-800/50">${data.searches} بحث</span>
+                    <span class="font-bold text-blue-500 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20">${data.searches} بحث</span>
                 `;
                 list.appendChild(row);
             });
         }
 
-        // لوحة التحكم الإدارية
+        // لوحة الإدارة
         function updateAdminStats() {
             document.getElementById('adminTotalDocs').innerText = doctors.length;
-            document.getElementById('adminTotalColleges').innerText = colleges.length;
+            document.getElementById('adminTotalBans').innerText = bannedUsers.length;
         }
 
-        function addNewDoctor() {
-            let name = document.getElementById('newDocName').value.trim();
-            let email = document.getElementById('newDocEmail').value.trim();
-            let college = document.getElementById('newDocCollege').value.trim();
-            let major = document.getElementById('newDocMajor').value.trim();
+        function banUser() {
+            let uid = document.getElementById('banUserId').value.trim();
+            if(!uid) return;
+            if(!bannedUsers.includes(uid)) {
+                bannedUsers.push(uid);
+                localStorage.setItem('najran_banned', JSON.stringify(bannedUsers));
+                alert(`تم حظر المستخدم صاحب الـ ID: ${uid}`);
+                document.getElementById('banUserId').value = '';
+                updateAdminStats();
+            }
+        }
 
-            if (!name || !email) {
-                alert('الرجاء إدخال الاسم والبريد الإلكتروني كحد أدنى');
+        // رفع ملفات الإكسل ومعالجتها
+        function handleExcelUpload() {
+            let fileInput = document.getElementById('excelFile');
+            if(fileInput.files.length === 0) {
+                alert('الرجاء اختيار ملف إكسل أولاً');
                 return;
             }
+            let file = fileInput.files[0];
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    let data = new Uint8Array(e.target.result);
+                    let workbook = XLSX.read(data, {type: 'array'});
+                    let firstSheetName = workbook.SheetNames[0];
+                    let worksheet = workbook.Sheets[firstSheetName];
+                    let json = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    let added = 0;
+                    json.forEach(row => {
+                        let name = row['الاسم'] || row['Name'] || '';
+                        let email = row['الايميل'] || row['Email'] || '';
+                        let college = row['الكلية'] || row['College'] || '';
+                        let major = row['التخصص'] || row['Major'] || '';
+                        let rank = row['الرتبة'] || row['Rank'] || '';
 
-            doctors.push({ id: Date.now().toString(), name, emails: [{email, label: "الرئيسي"}], college, major, category: "doctor" });
-            localStorage.setItem('najran_doctors', JSON.stringify(doctors));
-            alert('تم إضافة الدكتور بنجاح!');
-            document.getElementById('newDocName').value = '';
-            document.getElementById('newDocEmail').value = '';
-            updateAdminStats();
-        }
+                        if(name && email) {
+                            doctors.push({ id: Date.now().toString() + Math.random(), name, emails: [{email, label: "الرئيسي"}], college, major, rank, category: "doctor" });
+                            added++;
+                        }
+                    });
 
-        function addBulkDoctors() {
-            let text = document.getElementById('bulkText').value.trim();
-            if (!text) return;
-            let lines = text.split('\n');
-            let count = 0;
-            lines.forEach(line => {
-                let parts = line.split('-').map(p => p.trim());
-                if (parts.length >= 2) {
-                    doctors.push({ id: Date.now().toString(), name: parts[0], emails: [{email: parts[1]}], rank: parts[2]||'', college: parts[3]||'', major: parts[4]||'', category: "doctor" });
-                    count++;
+                    localStorage.setItem('najran_doctors', JSON.stringify(doctors));
+                    alert(`تم رفع الملف بنجاح! وإضافة ${added} دكتور جديد للنظام.`);
+                    updateAdminStats();
+                    fileInput.value = '';
+                } catch (err) {
+                    alert('حدث خطأ أثناء قراءة ملف الإكسل. تأكد من صحة الأعمدة (الاسم، الايميل، الكلية، التخصص).');
                 }
-            });
-            localStorage.setItem('najran_doctors', JSON.stringify(doctors));
-            alert(`تمت معالجة وإضافة ${count} عضو بنجاح!`);
-            document.getElementById('bulkText').value = '';
-            updateAdminStats();
+            };
+            reader.readAsArrayBuffer(file);
         }
     </script>
 </body>
