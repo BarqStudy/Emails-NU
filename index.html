@@ -29,11 +29,9 @@
         .dark .glass-card { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(59, 130, 246, 0.15); }
         .light .glass-card { background: #ffffff; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         
-        /* تفعيل حركات الأيقونات التفاعلية */
         .interactive-icon { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .interactive-icon:hover { transform: scale(1.15) rotate(5deg); }
         
-        /* تأثير النيون الشعار */
         .logo-glow { filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5)); animation: pulseGlow 3s infinite; }
         @keyframes pulseGlow {
             0%, 100% { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4)); }
@@ -56,7 +54,6 @@
         <!-- الشعار واسم الطالب -->
         <div class="text-center space-y-3">
             <div class="inline-block p-4 rounded-3xl glass-card logo-glow">
-                <!-- الأيقونة المستوحاة من الشعار الرسمي -->
                 <svg class="w-12 h-12 text-blue-500 interactive-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
                 </svg>
@@ -82,11 +79,11 @@
         <!-- الأقسام بالترتيب المطلوب -->
         <div class="space-y-3">
             
-            <!-- خانة البحث -->
+            <!-- خانة البحث (بلون مميز وواضح) -->
             <div class="relative">
                 <input type="text" id="mainSearchInput" oninput="handleInstantSearch(this.value)" placeholder="ابحث باسم الدكتور، الكلية، أو التخصص..." 
-                    class="w-full p-4 pr-12 rounded-2xl glass-card focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium shadow-sm">
-                <span class="absolute right-4 top-4 text-xl interactive-icon">🔎</span>
+                    class="w-full p-4 pr-12 rounded-2xl bg-blue-500/10 dark:bg-blue-950/60 border-2 border-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium shadow-md placeholder-blue-500/70 dark:placeholder-blue-300/60 text-slate-800 dark:text-slate-100">
+                <span class="absolute right-4 top-4 text-xl interactive-icon">🔍</span>
             </div>
 
             <!-- نتائج البحث -->
@@ -148,18 +145,18 @@
                 <p>تم تطوير منصة <strong>دليل أعضاء هيئة التدريس</strong> من قبل إدارة جامعة نجران لتسهيل الوصول إلى البريد الإلكتروني والبيانات الأكاديمية.</p>
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
                     <p class="text-xs text-slate-400 mb-1">للاستفسارات والمقترحات التواصل مع المطور عبر تليجرام:</p>
-                    <a href="https://t.me/Riman_1ME" target="_blank" class="inline-block px-4 py-2 rounded-xl bg-blue-500 text-white font-bold text-xs shadow hover:bg-blue-600 transition">
-                        @Riman_1ME 🚀
+                    <a href="https://t.me/Roman_1ME" target="_blank" class="inline-block px-4 py-2 rounded-xl bg-blue-500 text-white font-bold text-xs shadow hover:bg-blue-600 transition">
+                        @Roman_1ME 🚀
                     </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- صفحة لوحة الشرف -->
+    <!-- صفحة لوحة الصدارة -->
     <div id="page-leaderboard" class="max-w-md mx-auto p-4 space-y-4 hidden pt-6">
         <div class="text-center pt-2">
-            <h2 class="text-xl font-bold">🏆 لوحة الشرف</h2>
+            <h2 class="text-xl font-bold">🏆 لوحة الصدارة</h2>
             <p class="text-xs text-slate-400">أكثر المستخدمين تفاعلاً وبحثاً في المنصة</p>
         </div>
         <div id="leaderboardList" class="space-y-2"></div>
@@ -184,11 +181,12 @@
             </div>
         </div>
 
-        <!-- نظام رفع ملفات إكسل -->
+        <!-- نظام رفع ملفات إكسل (المحدث والمحسن) -->
         <div class="glass-card p-4 rounded-2xl space-y-3">
             <h3 class="font-bold text-sm flex items-center gap-2">
                 <span>📁</span> إضافة دكاترة عبر ملف إكسل (.xlsx)
             </h3>
+            <p class="text-[10px] text-slate-400">يدعم تلقائياً الأعمدة: (الاسم، الايميل، الكلية، التخصص، الرتبة)</p>
             <input type="file" id="excelFile" accept=".xlsx, .xls" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer">
             <button onclick="handleExcelUpload()" class="w-full py-2.5 rounded-xl bg-blue-500 text-white font-bold text-xs shadow hover:bg-blue-600 transition">
                 رفع ومعالجة الملف
@@ -207,7 +205,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة لعرض القوائم (دكاترة أو عمداء) -->
+    <!-- نافذة منبثقة لعرض القوائم -->
     <div id="modalCategory" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 hidden flex flex-col justify-end">
         <div class="glass-card bg-slate-900 border-t border-slate-800 rounded-t-3xl p-5 max-h-[80vh] overflow-y-auto space-y-4">
             <div class="flex justify-between items-center border-b border-slate-800 pb-3">
@@ -218,7 +216,7 @@
         </div>
     </div>
 
-    <!-- شريط التنقل السفلي (Menu Bar) العائم المطور -->
+    <!-- شريط التنقل السفلي (Menu Bar المحدث - بدون المطور) -->
     <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto glass-card p-2.5 flex justify-around items-center z-40 rounded-3xl shadow-2xl border border-slate-700/30">
         <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-blue-500 transition p-2 interactive-icon">
             <span class="text-lg">🏠</span>
@@ -226,20 +224,15 @@
         </button>
         <button onclick="switchTab('leaderboard')" id="nav-leaderboard" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon">
             <span class="text-lg">🏆</span>
-            <span class="text-[10px] font-bold">الشرف</span>
+            <span class="text-[10px] font-bold">الصدارة</span>
         </button>
         <button onclick="switchTab('admin')" id="nav-admin" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon">
             <span class="text-lg">⚙️</span>
             <span class="text-[10px] font-bold">الإدارة</span>
         </button>
-        <button onclick="switchTab('developer')" id="nav-developer" class="flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon">
-            <span class="text-lg">👨‍💻</span>
-            <span class="text-[10px] font-bold">المطور</span>
-        </button>
     </nav>
 
     <script>
-        // إعدادات التيليجرام والبيانات
         let tg = window.Telegram && window.Telegram.WebApp ? window.Telegram.WebApp : null;
         if (tg) tg.expand();
 
@@ -248,7 +241,6 @@
             name: tg && tg.initDataUnsafe && tg.initDataUnsafe.user ? (tg.initDataUnsafe.user.first_name + (tg.initDataUnsafe.user.last_name ? " " + tg.initDataUnsafe.user.last_name : "")) : "طالب نجران"
         };
 
-        // التحقق من الحظر
         let bannedUsers = JSON.parse(localStorage.getItem('najran_banned')) || [];
         if (bannedUsers.includes(currentUser.id.toString())) {
             document.body.innerHTML = `<div class="flex items-center justify-center h-screen text-center p-6"><h1 class="text-red-500 font-bold text-lg">عفواً، تم حظرك من استخدام هذه المنصة.</h1></div>`;
@@ -275,7 +267,6 @@
             localStorage.setItem('najran_doctors', JSON.stringify(doctors));
         }
 
-        // التبديل بين الأوضاع (ليلي / نهاري)
         function toggleTheme() {
             let html = document.documentElement;
             if (html.classList.contains('dark')) {
@@ -297,7 +288,6 @@
             document.getElementById('themeIcon').innerText = '☀️';
         }
 
-        // التنقل بين الشاشات
         function switchTab(tab) {
             ['home', 'leaderboard', 'admin', 'developer'].forEach(t => {
                 let el = document.getElementById(`page-${t}`);
@@ -314,7 +304,6 @@
             if (tab === 'admin') updateAdminStats();
         }
 
-        // البحث الفوري
         function handleInstantSearch(query) {
             let container = document.getElementById('searchResults');
             container.innerHTML = '';
@@ -342,7 +331,6 @@
             });
         }
 
-        // فتح نافذة القوائم
         function openCategory(cat) {
             let modal = document.getElementById('modalCategory');
             let title = document.getElementById('modalTitle');
@@ -373,7 +361,6 @@
             document.getElementById('modalCategory').classList.add('hidden');
         }
 
-        // لوحة الشرف
         function renderLeaderboard() {
             let list = document.getElementById('leaderboardList');
             list.innerHTML = '';
@@ -393,7 +380,6 @@
             });
         }
 
-        // لوحة الإدارة
         function updateAdminStats() {
             document.getElementById('adminTotalDocs').innerText = doctors.length;
             document.getElementById('adminTotalBans').innerText = bannedUsers.length;
@@ -411,7 +397,7 @@
             }
         }
 
-        // رفع ملفات الإكسل ومعالجتها
+        // نظام قراءة وإضافة ملفات الإكسل المحسن (مرن تماماً في قراءة الأعمدة)
         function handleExcelUpload() {
             let fileInput = document.getElementById('excelFile');
             if(fileInput.files.length === 0) {
@@ -430,24 +416,39 @@
                     
                     let added = 0;
                     json.forEach(row => {
-                        let name = row['الاسم'] || row['Name'] || '';
-                        let email = row['الايميل'] || row['Email'] || '';
-                        let college = row['الكلية'] || row['College'] || '';
-                        let major = row['التخصص'] || row['Major'] || '';
-                        let rank = row['الرتبة'] || row['Rank'] || '';
+                        let keys = Object.keys(row);
+                        let nameKey = keys.find(k => k.includes('اسم') || k.toLowerCase().includes('name'));
+                        let emailKey = keys.find(k => k.includes('ايميل') || k.includes('بريد') || k.toLowerCase().includes('email'));
+                        let collegeKey = keys.find(k => k.includes('كلية') || k.toLowerCase().includes('college'));
+                        let majorKey = keys.find(k => k.includes('تخصص') || k.toLowerCase().includes('major'));
+                        let rankKey = keys.find(k => k.includes('رتبة') || k.toLowerCase().includes('rank'));
+
+                        let name = nameKey ? row[nameKey] : '';
+                        let email = emailKey ? row[emailKey] : '';
+                        let college = collegeKey ? row[collegeKey] : '';
+                        let major = majorKey ? row[majorKey] : '';
+                        let rank = rankKey ? row[rankKey] : '';
 
                         if(name && email) {
-                            doctors.push({ id: Date.now().toString() + Math.random(), name, emails: [{email, label: "الرئيسي"}], college, major, rank, category: "doctor" });
+                            doctors.push({ 
+                                id: Date.now().toString() + Math.random(), 
+                                name: name.toString().trim(), 
+                                emails: [{email: email.toString().trim(), label: "الرئيسي"}], 
+                                college: college ? college.toString().trim() : '', 
+                                major: major ? major.toString().trim() : '', 
+                                rank: rank ? rank.toString().trim() : '', 
+                                category: "doctor" 
+                            });
                             added++;
                         }
                     });
 
                     localStorage.setItem('najran_doctors', JSON.stringify(doctors));
-                    alert(`تم رفع الملف بنجاح! وإضافة ${added} دكتور جديد للنظام.`);
+                    alert(`تم رفع الملف بنجاح! وتمت إضافة ${added} دكتور جديد للنظام.`);
                     updateAdminStats();
                     fileInput.value = '';
                 } catch (err) {
-                    alert('حدث خطأ أثناء قراءة ملف الإكسل. تأكد من صحة الأعمدة (الاسم، الايميل، الكلية، التخصص).');
+                    alert('حدث خطأ أثناء معالجة ملف الإكسل. تأكد من أن الملف سليم ويحتوي على بيانات صحيحة.');
                 }
             };
             reader.readAsArrayBuffer(file);
