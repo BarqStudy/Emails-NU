@@ -32,10 +32,10 @@
         .interactive-icon { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .interactive-icon:hover { transform: scale(1.15) rotate(5deg); }
         
-        .logo-glow { filter: drop-shadow(0 0 10px rgba(59, 130, 246, 0.5)); animation: pulseGlow 3s infinite; }
+        .logo-glow { filter: drop-shadow(0 0 12px rgba(59, 130, 246, 0.6)); animation: pulseGlow 3s infinite; }
         @keyframes pulseGlow {
             0%, 100% { filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.4)); }
-            50% { filter: drop-shadow(0 0 18px rgba(59, 130, 246, 0.8)); }
+            50% { filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.9)); }
         }
     </style>
 </head>
@@ -51,12 +51,10 @@
     <!-- 1. الشاشة الرئيسية -->
     <div id="page-home" class="max-w-md mx-auto p-4 space-y-6 pt-6">
         
-        <!-- الشعار واسم الطالب -->
+        <!-- اللوقو الرسمي واسم الطالب -->
         <div class="text-center space-y-3">
-            <div class="inline-block p-4 rounded-3xl glass-card logo-glow">
-                <svg class="w-12 h-12 text-blue-500 interactive-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
+            <div class="inline-block p-2 rounded-3xl glass-card logo-glow">
+                <img src="logo.png" alt="اللوقو الرسمي" class="w-16 h-16 object-cover rounded-2xl interactive-icon" onerror="this.src='https://via.placeholder.com/64?text=LOGO'">
             </div>
             <h1 id="userName" class="text-xl font-bold tracking-tight">أهلاً، زائرنا الكريم</h1>
             <div class="inline-block px-4 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 text-xs font-bold">
@@ -79,10 +77,10 @@
         <!-- الأقسام بالترتيب المطلوب -->
         <div class="space-y-3">
             
-            <!-- خانة البحث (بلون مميز وواضح) -->
+            <!-- خانة البحث (بلون مختلف ومميز وواضح) -->
             <div class="relative">
                 <input type="text" id="mainSearchInput" oninput="handleInstantSearch(this.value)" placeholder="ابحث باسم الدكتور، الكلية، أو التخصص..." 
-                    class="w-full p-4 pr-12 rounded-2xl bg-blue-500/10 dark:bg-blue-950/60 border-2 border-blue-500/40 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium shadow-md placeholder-blue-500/70 dark:placeholder-blue-300/60 text-slate-800 dark:text-slate-100">
+                    class="w-full p-4 pr-12 rounded-2xl bg-blue-600/15 dark:bg-blue-900/40 border-2 border-blue-500/60 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold shadow-lg placeholder-blue-600/70 dark:placeholder-blue-300/70 text-slate-900 dark:text-slate-100">
                 <span class="absolute right-4 top-4 text-xl interactive-icon">🔍</span>
             </div>
 
@@ -181,12 +179,12 @@
             </div>
         </div>
 
-        <!-- نظام رفع ملفات إكسل (المحدث والمحسن) -->
+        <!-- نظام رفع ملفات إكسل المباشر -->
         <div class="glass-card p-4 rounded-2xl space-y-3">
             <h3 class="font-bold text-sm flex items-center gap-2">
                 <span>📁</span> إضافة دكاترة عبر ملف إكسل (.xlsx)
             </h3>
-            <p class="text-[10px] text-slate-400">يدعم تلقائياً الأعمدة: (الاسم، الايميل، الكلية، التخصص، الرتبة)</p>
+            <p class="text-[10px] text-slate-400">الترتيب المطلوب بالأعمدة: (الاسم، الايميل، الكلية، الرتبة، التخصص)</p>
             <input type="file" id="excelFile" accept=".xlsx, .xls" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-blue-500 file:text-white hover:file:bg-blue-600 cursor-pointer">
             <button onclick="handleExcelUpload()" class="w-full py-2.5 rounded-xl bg-blue-500 text-white font-bold text-xs shadow hover:bg-blue-600 transition">
                 رفع ومعالجة الملف
@@ -216,7 +214,7 @@
         </div>
     </div>
 
-    <!-- شريط التنقل السفلي (Menu Bar المحدث - بدون المطور) -->
+    <!-- شريط التنقل السفلي (بدون أيقونة المطور) -->
     <nav class="fixed bottom-4 left-4 right-4 max-w-md mx-auto glass-card p-2.5 flex justify-around items-center z-40 rounded-3xl shadow-2xl border border-slate-700/30">
         <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center gap-1 text-blue-500 transition p-2 interactive-icon">
             <span class="text-lg">🏠</span>
@@ -292,11 +290,15 @@
             ['home', 'leaderboard', 'admin', 'developer'].forEach(t => {
                 let el = document.getElementById(`page-${t}`);
                 if(el) el.classList.add('hidden');
+            });
+            ['home', 'leaderboard', 'admin'].forEach(t => {
                 let nav = document.getElementById(`nav-${t}`);
                 if(nav) nav.className = "flex flex-col items-center gap-1 text-slate-400 hover:text-blue-500 transition p-2 interactive-icon";
             });
+
             let targetPage = document.getElementById(`page-${tab}`);
             if(targetPage) targetPage.classList.remove('hidden');
+            
             let targetNav = document.getElementById(`nav-${tab}`);
             if(targetNav) targetNav.className = "flex flex-col items-center gap-1 text-blue-500 transition p-2 interactive-icon";
 
@@ -397,7 +399,7 @@
             }
         }
 
-        // نظام قراءة وإضافة ملفات الإكسل المحسن (مرن تماماً في قراءة الأعمدة)
+        // نظام قراءة الإكسل المحسّن (يقرأ بالترتيب المباشر للأعمدة وبدون أخطاء)
         function handleExcelUpload() {
             let fileInput = document.getElementById('excelFile');
             if(fileInput.files.length === 0) {
@@ -412,43 +414,43 @@
                     let workbook = XLSX.read(data, {type: 'array'});
                     let firstSheetName = workbook.SheetNames[0];
                     let worksheet = workbook.Sheets[firstSheetName];
-                    let json = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    // قراءة الملف كصفوف ومصفوفات (Array of arrays) لضمان الدقة المطلقة
+                    let rows = XLSX.utils.sheet_to_json(worksheet, {header: 1});
                     
                     let added = 0;
-                    json.forEach(row => {
-                        let keys = Object.keys(row);
-                        let nameKey = keys.find(k => k.includes('اسم') || k.toLowerCase().includes('name'));
-                        let emailKey = keys.find(k => k.includes('ايميل') || k.includes('بريد') || k.toLowerCase().includes('email'));
-                        let collegeKey = keys.find(k => k.includes('كلية') || k.toLowerCase().includes('college'));
-                        let majorKey = keys.find(k => k.includes('تخصص') || k.toLowerCase().includes('major'));
-                        let rankKey = keys.find(k => k.includes('رتبة') || k.toLowerCase().includes('rank'));
-
-                        let name = nameKey ? row[nameKey] : '';
-                        let email = emailKey ? row[emailKey] : '';
-                        let college = collegeKey ? row[collegeKey] : '';
-                        let major = majorKey ? row[majorKey] : '';
-                        let rank = rankKey ? row[rankKey] : '';
+                    // البدء من الصف الثاني (تخطي صف العناوين index 0)
+                    for(let i = 1; i < rows.length; i++) {
+                        let row = rows[i];
+                        if(!row || row.length === 0) continue;
+                        
+                        // الترتيب: 0: الاسم, 1: الايميل, 2: الكلية, 3: الرتبة, 4: التخصص
+                        let name = row[0] ? row[0].toString().trim() : '';
+                        let email = row[1] ? row[1].toString().trim() : '';
+                        let college = row[2] ? row[2].toString().trim() : '';
+                        let rank = row[3] ? row[3].toString().trim() : '';
+                        let major = row[4] ? row[4].toString().trim() : '';
 
                         if(name && email) {
                             doctors.push({ 
                                 id: Date.now().toString() + Math.random(), 
-                                name: name.toString().trim(), 
-                                emails: [{email: email.toString().trim(), label: "الرئيسي"}], 
-                                college: college ? college.toString().trim() : '', 
-                                major: major ? major.toString().trim() : '', 
-                                rank: rank ? rank.toString().trim() : '', 
+                                name, 
+                                emails: [{email, label: "الرئيسي"}], 
+                                college, 
+                                major, 
+                                rank, 
                                 category: "doctor" 
                             });
                             added++;
                         }
-                    });
+                    }
 
                     localStorage.setItem('najran_doctors', JSON.stringify(doctors));
                     alert(`تم رفع الملف بنجاح! وتمت إضافة ${added} دكتور جديد للنظام.`);
                     updateAdminStats();
                     fileInput.value = '';
                 } catch (err) {
-                    alert('حدث خطأ أثناء معالجة ملف الإكسل. تأكد من أن الملف سليم ويحتوي على بيانات صحيحة.');
+                    alert('حدث خطأ أثناء معالجة ملف الإكسل. تأكد من أن الملف سليم بصيغة .xlsx');
                 }
             };
             reader.readAsArrayBuffer(file);
