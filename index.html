@@ -182,13 +182,15 @@
         </div>
     </div>
 
-    <!-- صفحة لوحة الصدارة (بدون قائمة الطلاب حالياً) -->
+    <!-- صفحة لوحة الصدارة -->
     <div id="page-leaderboard" class="max-w-md mx-auto p-4 space-y-4 hidden pt-6">
         <div class="text-center pt-2">
-            <h2 class="text-xl font-bold">🏆 لوحة الصدارة</h2>
-            <p class="text-xs text-slate-400">أكثر المستخدمين تفاعلاً وبحثاً في المنصة</p>
+            <h2 id="lbTitle" class="text-xl font-bold">🏆 لوحة الصدارة</h2>
+            <p id="lbSubtitle" class="text-xs text-slate-400">أكثر المستخدمين تفاعلاً وبحثاً في المنصة</p>
         </div>
+        <div id="lbMyRank" class="hidden glass-card rounded-2xl p-4 flex items-center justify-between text-xs border-blue-500/40"></div>
         <div id="leaderboardList" class="space-y-2"></div>
+        <p id="lbStatus" class="text-[10px] text-center text-slate-400"></p>
     </div>
 
     <!-- لوحة تحكم الإدارة -->
@@ -245,6 +247,66 @@
                 رفع ومعالجة الملف
             </button>
         </div>
+
+        <!-- (1) الإضافة الجماعية للدكاترة -->
+        <div class="glass-card p-4 rounded-2xl space-y-3">
+            <h3 class="font-bold text-sm flex items-center gap-2">
+                <span>📋</span> إضافة جماعية للدكاترة (لصق مباشر)
+            </h3>
+            <p class="text-[10px] text-slate-400 leading-relaxed">
+                كل سطر = دكتور واحد، بهذا الترتيب:
+                <span class="text-blue-500 font-bold">الاسم | الايميل | الكلية | الرتبة | التخصص</span><br>
+                افصل بين الحقول بـ <b>Tab</b> (نسخ مباشر من إكسل) أو <b>|</b> أو <b>فاصلة</b>. الاسم والإيميل إلزاميان، والباقي اختياري.
+            </p>
+            <textarea id="bulkAddInput" rows="7" dir="auto" spellcheck="false"
+                placeholder="د. أحمد القحطاني | ahmad@nu.edu.sa | كلية الهندسة | أستاذ مشارك | هندسة مدنية&#10;د. سارة الحارثي | sara@nu.edu.sa | كلية الطب | أستاذ مساعد | أحياء دقيقة"
+                class="w-full p-3 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-[11px] font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+            <label class="flex items-center gap-2 text-[11px] text-slate-400 cursor-pointer">
+                <input type="checkbox" id="bulkSkipDuplicates" checked class="accent-blue-500">
+                تجاهل الإيميلات المكرّرة الموجودة مسبقاً
+            </label>
+            <div class="grid grid-cols-2 gap-2">
+                <button onclick="handleBulkAdd()" class="py-2.5 rounded-xl bg-blue-500 text-white font-bold text-xs shadow hover:bg-blue-600 transition">
+                    إضافة الكل
+                </button>
+                <button onclick="document.getElementById('bulkAddInput').value=''; document.getElementById('bulkAddReport').innerHTML='';" class="py-2.5 rounded-xl bg-slate-200 dark:bg-slate-800 font-bold text-xs">
+                    مسح الحقل
+                </button>
+            </div>
+            <div id="bulkAddReport" class="text-[11px] space-y-1"></div>
+        </div>
+
+        <!-- (3) إدارة الكليات والتخصصات -->
+        <div class="glass-card p-4 rounded-2xl space-y-4">
+            <h3 class="font-bold text-sm flex items-center gap-2">
+                <span>🏛️</span> إدارة الكليات والتخصصات
+            </h3>
+
+            <!-- إضافة كلية -->
+            <div class="space-y-2">
+                <p class="text-[11px] font-bold text-slate-500 dark:text-slate-300">إضافة كلية جديدة</p>
+                <div class="flex gap-2">
+                    <input type="text" id="newCollegeName" placeholder="اسم الكلية" class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs">
+                    <button onclick="addCollege()" class="px-4 py-2.5 rounded-xl bg-blue-500 text-white font-bold text-xs shrink-0">إضافة</button>
+                </div>
+            </div>
+
+            <!-- إضافة تخصص -->
+            <div class="space-y-2 pt-3 border-t border-slate-200 dark:border-slate-800">
+                <p class="text-[11px] font-bold text-slate-500 dark:text-slate-300">إضافة تخصص لكلية</p>
+                <select id="majorCollegeSelect" class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs"></select>
+                <div class="flex gap-2">
+                    <input type="text" id="newMajorName" placeholder="اسم التخصص" class="w-full p-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-xs">
+                    <button onclick="addMajor()" class="px-4 py-2.5 rounded-xl bg-blue-500 text-white font-bold text-xs shrink-0">إضافة</button>
+                </div>
+            </div>
+
+            <!-- شجرة الكليات والتخصصات مع الحذف -->
+            <div class="pt-3 border-t border-slate-200 dark:border-slate-800 space-y-2">
+                <p class="text-[11px] font-bold text-slate-500 dark:text-slate-300">الكليات المسجلة</p>
+                <div id="collegesTree" class="space-y-2 max-h-72 overflow-y-auto"></div>
+            </div>
+        </div>
     </div>
 
     <!-- نافذة منبثقة لعرض القوائم (كليات ← تخصصات ← أعضاء) -->
@@ -288,6 +350,13 @@
     </nav>
 
     <script>
+        /* ============================================================
+           ⚙️ الإعدادات — عدّل هذا الرابط فقط بعد رفع الملف على GitHub
+           ضع رابط RAW لملف leaderboard.json
+           مثال: https://raw.githubusercontent.com/USERNAME/REPO/main/leaderboard.json
+           ============================================================ */
+        const LEADERBOARD_CONFIG_URL = "leaderboard.json";
+
         /* ============================================================
            1) تهيئة تليجرام Mini App + هوية المستخدم (الاسم واليوزر)
            ============================================================ */
@@ -340,9 +409,41 @@
 
         let admins = JSON.parse(localStorage.getItem('najran_admins')) || [];
 
+        // (3) سجل الكليات والتخصصات — يُبنى تلقائياً من بيانات الدكاترة ثم يُدار يدوياً
+        let collegesReg = JSON.parse(localStorage.getItem('najran_colleges')) || null;
+        let majorsReg   = JSON.parse(localStorage.getItem('najran_majors'))   || null;
+        if (!collegesReg || !majorsReg) {
+            collegesReg = [...new Set(doctors.map(d => d.college).filter(c => c && c.trim()))];
+            majorsReg = {};
+            doctors.forEach(d => {
+                if (d.college && d.college.trim() && d.major && d.major.trim()) {
+                    if (!majorsReg[d.college]) majorsReg[d.college] = [];
+                    if (!majorsReg[d.college].includes(d.major)) majorsReg[d.college].push(d.major);
+                }
+            });
+            saveRegistries();
+        }
+
+        function saveRegistries() {
+            localStorage.setItem('najran_colleges', JSON.stringify(collegesReg));
+            localStorage.setItem('najran_majors', JSON.stringify(majorsReg));
+        }
+
+        // يضمن أن أي كلية/تخصص جديد يدخل عبر الإضافة يُسجَّل تلقائياً
+        function registerCollegeMajor(college, major) {
+            if (college && college.trim()) {
+                if (!collegesReg.includes(college)) collegesReg.push(college);
+                if (major && major.trim()) {
+                    if (!majorsReg[college]) majorsReg[college] = [];
+                    if (!majorsReg[college].includes(major)) majorsReg[college].push(major);
+                }
+            }
+        }
+
         let usersStats = JSON.parse(localStorage.getItem('najran_users_stats')) || {};
-        if (!usersStats[currentUser.id]) usersStats[currentUser.id] = { name: currentUser.name, searches: 0 };
+        if (!usersStats[currentUser.id]) usersStats[currentUser.id] = { name: currentUser.name, handle: currentUser.handle, searches: 0 };
         usersStats[currentUser.id].name = currentUser.name;
+        usersStats[currentUser.id].handle = currentUser.handle;
 
         // العداد العام للمنصة (يزيد عند الضغط على دكتور فقط)
         let totalDoctorViews = parseInt(localStorage.getItem('najran_total_views') || '0', 10);
@@ -461,6 +562,13 @@
 
         function uniq(arr) { return [...new Set(arr.filter(v => v && String(v).trim() !== ''))]; }
 
+        // تخصصات كلية = الموجودة فعلياً + المسجّلة يدوياً في لوحة الإدارة
+        function collegeMajors(college, inCollege) {
+            let fromPeople = uniq((inCollege || doctors.filter(d => d.college === college)).map(d => d.major));
+            let reg = (majorsReg[college] || []).filter(m => !fromPeople.includes(m));
+            return [...fromPeople, ...reg];
+        }
+
         function openCategory(cat) {
             modalStack = [{ view: 'colleges', cat: cat }];
             renderModal();
@@ -495,7 +603,9 @@
             if (state.view === 'colleges') {
                 titleEl.innerText = catLabel;
                 crumbEl.innerText = 'اختر الكلية';
-                let colleges = uniq(pool.map(d => d.college));
+                let withPeople = uniq(pool.map(d => d.college));
+                // كليات مسجّلة في النظام ولو كانت فارغة (تظهر للمشرف بعد إضافتها)
+                let colleges = [...withPeople, ...collegesReg.filter(c => !withPeople.includes(c))];
                 let noCollege = pool.filter(d => !d.college || !d.college.trim());
 
                 if (colleges.length === 0 && noCollege.length === 0) {
@@ -509,7 +619,7 @@
                         if (state.cat === 'head') { modalPush({ view: 'people', cat: state.cat, college: col }); return; }
                         // (5) أعضاء هيئة التدريس: الكليات ← التخصصات (إن وجدت) ← الأعضاء
                         let inCollege = pool.filter(d => d.college === col);
-                        let majors = uniq(inCollege.map(d => d.major));
+                        let majors = collegeMajors(col, inCollege);
                         if (majors.length > 0) modalPush({ view: 'majors', cat: state.cat, college: col });
                         else modalPush({ view: 'people', cat: state.cat, college: col });
                     }));
@@ -525,7 +635,7 @@
                 titleEl.innerText = state.college;
                 crumbEl.innerText = catLabel + ' • اختر التخصص';
                 let inCollege = pool.filter(d => d.college === state.college);
-                let majors = uniq(inCollege.map(d => d.major));
+                let majors = collegeMajors(state.college, inCollege);
                 let noMajor = inCollege.filter(d => !d.major || !d.major.trim());
 
                 majors.forEach((mj, i) => {
@@ -680,17 +790,106 @@
         });
 
         /* ============================================================
-           2) لوحة الصدارة - بدون عرض الطلاب حالياً
+           2) لوحة الصدارة + التصفير عبر ملف GitHub
            ============================================================ */
+        let lbConfig = JSON.parse(localStorage.getItem('najran_lb_config')) || { enabled: true, reset_id: 0, top_limit: 10, title: "🏆 لوحة الصدارة", subtitle: "أكثر المستخدمين تفاعلاً وبحثاً في المنصة", note: "" };
+        let lbAppliedReset = parseInt(localStorage.getItem('najran_lb_reset_applied') || '0', 10);
+        let lbSyncState = 'idle';
+
+        // يجلب ملف الإعدادات من GitHub ويصفّر اللوحة إذا تغيّر reset_id
+        async function syncLeaderboardConfig() {
+            lbSyncState = 'loading';
+            try {
+                let res = await fetch(LEADERBOARD_CONFIG_URL + '?t=' + Date.now(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                let cfg = await res.json();
+
+                lbConfig = Object.assign(lbConfig, cfg);
+                localStorage.setItem('najran_lb_config', JSON.stringify(lbConfig));
+
+                let incoming = parseInt(cfg.reset_id || 0, 10);
+                if (incoming > lbAppliedReset) {
+                    resetLeaderboardData();
+                    lbAppliedReset = incoming;
+                    localStorage.setItem('najran_lb_reset_applied', String(lbAppliedReset));
+                }
+                lbSyncState = 'ok';
+            } catch (e) {
+                lbSyncState = 'offline';
+            }
+            renderLeaderboard();
+        }
+
+        function resetLeaderboardData() {
+            usersStats = {};
+            usersStats[currentUser.id] = { name: currentUser.name, handle: currentUser.handle, searches: 0 };
+            totalDoctorViews = 0;
+            saveAll();
+            document.getElementById('searchCountDisplay').innerText = '0';
+        }
+
         function renderLeaderboard() {
             let list = document.getElementById('leaderboardList');
-            list.innerHTML = `
-                <div class="glass-card rounded-3xl p-8 text-center space-y-3 fade-in">
-                    <div class="text-4xl">🏗️</div>
-                    <h3 class="font-bold text-sm text-slate-700 dark:text-slate-200">لوحة الصدارة قيد التجهيز</h3>
-                    <p class="text-xs text-slate-400 leading-relaxed">سيتم تفعيل عرض المتصدرين قريباً بعد اكتمال بيانات المنصة.</p>
-                </div>`;
+            let statusEl = document.getElementById('lbStatus');
+            let myRankEl = document.getElementById('lbMyRank');
+            document.getElementById('lbTitle').innerText = lbConfig.title || '🏆 لوحة الصدارة';
+            document.getElementById('lbSubtitle').innerText = lbConfig.subtitle || 'أكثر المستخدمين تفاعلاً وبحثاً في المنصة';
+            list.innerHTML = '';
+            myRankEl.classList.add('hidden');
+
+            if (lbConfig.enabled === false) {
+                list.innerHTML = `<div class="glass-card rounded-3xl p-8 text-center space-y-3 fade-in">
+                        <div class="text-4xl">🔒</div>
+                        <h3 class="font-bold text-sm">لوحة الصدارة موقوفة حالياً</h3>
+                        <p class="text-xs text-slate-400">${escapeHtml(lbConfig.note || 'سيتم تفعيلها لاحقاً من قبل الإدارة.')}</p>
+                    </div>`;
+                statusEl.innerText = '';
+                return;
+            }
+
+            let sorted = Object.entries(usersStats)
+                .filter(([, d]) => (d.searches || 0) > 0)
+                .sort((a, b) => b[1].searches - a[1].searches);
+
+            if (sorted.length === 0) {
+                list.innerHTML = `<div class="glass-card rounded-3xl p-8 text-center space-y-3 fade-in">
+                        <div class="text-4xl">✨</div>
+                        <h3 class="font-bold text-sm">اللوحة فارغة</h3>
+                        <p class="text-xs text-slate-400">ابدأ بالبحث عن دكتور وستظهر هنا مباشرة.</p>
+                    </div>`;
+            } else {
+                let medals = ['🥇', '🥈', '🥉'];
+                sorted.slice(0, lbConfig.top_limit || 10).forEach(([uid, data], index) => {
+                    let isMe = String(uid) === String(currentUser.id);
+                    let row = document.createElement('div');
+                    row.className = "glass-card p-3 rounded-2xl flex justify-between items-center text-xs row-in " + (isMe ? "border-blue-500/60 ring-1 ring-blue-500/30" : "");
+                    row.style.animationDelay = (index * 45) + 'ms';
+                    row.innerHTML = `
+                        <div class="flex items-center gap-3 min-w-0">
+                            <span class="w-7 h-7 rounded-full bg-blue-500/20 flex items-center justify-center font-bold text-blue-500 shrink-0">${medals[index] || (index + 1)}</span>
+                            <div class="min-w-0">
+                                <div class="font-bold text-slate-700 dark:text-slate-200 truncate">${escapeHtml(data.name || 'مستخدم')}${isMe ? ' <span class="text-blue-500">(أنت)</span>' : ''}</div>
+                                <div class="text-[10px] text-slate-400 truncate" dir="ltr">${escapeHtml(data.handle || '')}</div>
+                            </div>
+                        </div>
+                        <span class="font-bold text-blue-500 bg-blue-500/10 px-2.5 py-1 rounded-lg border border-blue-500/20 shrink-0">${data.searches} بحث</span>`;
+                    list.appendChild(row);
+                });
+
+                // ترتيبي أنا إن كنت خارج القائمة المعروضة
+                let myIdx = sorted.findIndex(([uid]) => String(uid) === String(currentUser.id));
+                if (myIdx >= (lbConfig.top_limit || 10)) {
+                    myRankEl.classList.remove('hidden');
+                    myRankEl.innerHTML = `<span class="font-bold">ترتيبك: #${myIdx + 1}</span>
+                        <span class="font-bold text-blue-500">${sorted[myIdx][1].searches} بحث</span>`;
+                }
+            }
+
+            let msg = { loading: '⏳ جاري مزامنة اللوحة...', ok: '✅ متزامنة مع إعدادات الإدارة', offline: '⚠️ تعذّر الوصول لملف الإعدادات — عرض البيانات المحلية', idle: '' }[lbSyncState];
+            statusEl.innerText = msg + (lbAppliedReset ? ` • دورة رقم ${lbAppliedReset}` : '');
         }
+
+        syncLeaderboardConfig();
 
         /* ============================================================
            لوحة الإدارة
@@ -700,6 +899,7 @@
             document.getElementById('adminTotalBans').innerText = bannedUsers.length;
             renderBannedUsersList();
             renderAdminsList();
+            renderCollegesTree();
         }
 
         function addAdmin() {
@@ -761,6 +961,170 @@
         }
 
         /* ============================================================
+           1) الإضافة الجماعية للدكاترة
+           الهيكلة: الاسم | الايميل | الكلية | الرتبة | التخصص
+           ============================================================ */
+        function splitBulkLine(line) {
+            if (line.includes('\t')) return line.split('\t');
+            if (line.includes('|'))  return line.split('|');
+            if (line.includes('،'))  return line.split('،');
+            if (line.includes(','))  return line.split(',');
+            if (/\s{2,}/.test(line)) return line.split(/\s{2,}/);
+            return [line];
+        }
+
+        function isHeadRank(rank) { return /عميد|وكيل|رئيس قسم|رئيسة/.test(rank || ''); }
+
+        function handleBulkAdd() {
+            let raw = document.getElementById('bulkAddInput').value;
+            let report = document.getElementById('bulkAddReport');
+            let skipDup = document.getElementById('bulkSkipDuplicates').checked;
+            report.innerHTML = '';
+
+            let lines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l !== '');
+            if (lines.length === 0) { alert('الرجاء لصق البيانات أولاً'); return; }
+
+            let existingEmails = new Set(doctors.map(d => (d.emails[0] && d.emails[0].email || '').toLowerCase()));
+            let added = 0, skipped = 0, errors = [];
+
+            lines.forEach((line, i) => {
+                // تجاهل سطر العناوين إن وُجد
+                if (i === 0 && /الاسم/.test(line) && /(الايميل|الإيميل|البريد)/.test(line)) return;
+
+                let parts = splitBulkLine(line).map(p => p.trim());
+                let [name, email, college, rank, major] = [parts[0] || '', parts[1] || '', parts[2] || '', parts[3] || '', parts[4] || ''];
+
+                if (!name || !email) { errors.push(`سطر ${i + 1}: ينقصه الاسم أو الإيميل`); return; }
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errors.push(`سطر ${i + 1}: صيغة الإيميل غير صحيحة (${escapeHtml(email)})`); return; }
+                if (skipDup && existingEmails.has(email.toLowerCase())) { skipped++; return; }
+
+                doctors.push({
+                    id: Date.now().toString() + Math.random(),
+                    name, emails: [{ email, label: "الرئيسي" }],
+                    college, major, rank,
+                    category: isHeadRank(rank) ? "head" : "doctor"
+                });
+                existingEmails.add(email.toLowerCase());
+                registerCollegeMajor(college, major);
+                added++;
+            });
+
+            localStorage.setItem('najran_doctors', JSON.stringify(doctors));
+            saveRegistries();
+            updateAdminStats();
+
+            let html = `<div class="p-2.5 rounded-xl bg-green-500/10 border border-green-500/25 text-green-500 font-bold">✅ تمت إضافة ${added} دكتور</div>`;
+            if (skipped) html += `<div class="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/25 text-amber-500">⏭️ تم تجاهل ${skipped} (إيميل مكرر)</div>`;
+            if (errors.length) html += `<div class="p-2.5 rounded-xl bg-red-500/10 border border-red-500/25 text-red-400 space-y-1">❌ ${errors.length} سطر لم يُضف:<br>${errors.slice(0, 8).join('<br>')}${errors.length > 8 ? '<br>…' : ''}</div>`;
+            report.innerHTML = html;
+            if (added > 0) document.getElementById('bulkAddInput').value = '';
+        }
+
+        /* ============================================================
+           3) إضافة / حذف الكليات والتخصصات
+           ============================================================ */
+        function addCollege() {
+            let input = document.getElementById('newCollegeName');
+            let name = input.value.trim();
+            if (!name) return;
+            if (collegesReg.includes(name)) { alert('هذه الكلية مسجّلة مسبقاً'); return; }
+            collegesReg.push(name);
+            if (!majorsReg[name]) majorsReg[name] = [];
+            saveRegistries();
+            input.value = '';
+            renderCollegesTree();
+        }
+
+        function addMajor() {
+            let col = document.getElementById('majorCollegeSelect').value;
+            let input = document.getElementById('newMajorName');
+            let name = input.value.trim();
+            if (!col) { alert('أضف كلية أولاً ثم اختر الكلية'); return; }
+            if (!name) return;
+            if (!majorsReg[col]) majorsReg[col] = [];
+            if (collegeMajors(col).includes(name)) { alert('هذا التخصص مسجّل مسبقاً في هذه الكلية'); return; }
+            majorsReg[col].push(name);
+            saveRegistries();
+            input.value = '';
+            renderCollegesTree();
+        }
+
+        function deleteCollege(col) {
+            let affected = doctors.filter(d => d.college === col);
+            let msg = affected.length
+                ? `سيتم حذف كلية "${col}" وجميع تخصصاتها.\n\nيوجد ${affected.length} عضو مرتبط بها — لن يُحذفوا، لكن ستُفرَّغ خانة الكلية والتخصص لديهم وسيظهرون تحت "بدون كلية محددة".\n\nهل تريد المتابعة؟`
+                : `سيتم حذف كلية "${col}" وجميع تخصصاتها. هل تريد المتابعة؟`;
+            if (!confirm(msg)) return;
+
+            affected.forEach(d => { d.college = ''; d.major = ''; });
+            collegesReg = collegesReg.filter(c => c !== col);
+            delete majorsReg[col];
+            localStorage.setItem('najran_doctors', JSON.stringify(doctors));
+            saveRegistries();
+            renderCollegesTree();
+            updateAdminStats();
+        }
+
+        function deleteMajor(col, mj) {
+            let affected = doctors.filter(d => d.college === col && d.major === mj);
+            let msg = affected.length
+                ? `سيتم حذف تخصص "${mj}" من "${col}".\n\nيوجد ${affected.length} عضو في هذا التخصص — لن يُحذفوا، لكن ستُفرَّغ خانة التخصص لديهم ويبقون ضمن الكلية.\n\nهل تريد المتابعة؟`
+                : `سيتم حذف تخصص "${mj}" من "${col}". هل تريد المتابعة؟`;
+            if (!confirm(msg)) return;
+
+            affected.forEach(d => { d.major = ''; });
+            if (majorsReg[col]) majorsReg[col] = majorsReg[col].filter(m => m !== mj);
+            localStorage.setItem('najran_doctors', JSON.stringify(doctors));
+            saveRegistries();
+            renderCollegesTree();
+            updateAdminStats();
+        }
+
+        function renderCollegesTree() {
+            let tree = document.getElementById('collegesTree');
+            let select = document.getElementById('majorCollegeSelect');
+            if (!tree || !select) return;
+
+            // توحيد السجل مع البيانات الفعلية
+            doctors.forEach(d => registerCollegeMajor(d.college, d.major));
+            saveRegistries();
+
+            select.innerHTML = collegesReg.length
+                ? collegesReg.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join('')
+                : '<option value="">لا توجد كليات مسجّلة</option>';
+
+            tree.innerHTML = '';
+            if (collegesReg.length === 0) {
+                tree.innerHTML = '<p class="text-xs text-slate-400 text-center py-3">لا توجد كليات مسجّلة بعد</p>';
+                return;
+            }
+
+            collegesReg.forEach(col => {
+                let majors = collegeMajors(col);
+                let count = doctors.filter(d => d.college === col).length;
+                let box = document.createElement('div');
+                box.className = "rounded-2xl bg-slate-100 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/30 p-3 space-y-2";
+                box.innerHTML = `
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <div class="font-bold text-xs truncate">🏛️ ${escapeHtml(col)}</div>
+                            <div class="text-[10px] text-slate-400">${count} عضو • ${majors.length} تخصص</div>
+                        </div>
+                        <button onclick="deleteCollege('${escapeHtml(col).replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded-lg bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-[10px] shrink-0">حذف الكلية</button>
+                    </div>
+                    ${majors.length ? `<div class="flex flex-wrap gap-1.5 pt-1 border-t border-slate-200 dark:border-slate-700/40">
+                        ${majors.map(m => `
+                            <span class="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg bg-blue-500/10 border border-blue-500/20 text-[10px] text-blue-500">
+                                ${escapeHtml(m)}
+                                <button onclick="deleteMajor('${escapeHtml(col).replace(/'/g, "\\'")}','${escapeHtml(m).replace(/'/g, "\\'")}')" class="text-red-400 font-bold">✕</button>
+                            </span>`).join('')}
+                    </div>` : '<p class="text-[10px] text-slate-400">لا توجد تخصصات</p>'}
+                `;
+                tree.appendChild(box);
+            });
+        }
+
+        /* ============================================================
            رفع ملف الإكسل
            ============================================================ */
         function handleExcelUpload() {
@@ -794,11 +1158,13 @@
                                 college, major, rank,
                                 category: isHead ? "head" : "doctor"
                             });
+                            registerCollegeMajor(college, major);
                             added++;
                         }
                     }
 
                     localStorage.setItem('najran_doctors', JSON.stringify(doctors));
+                    saveRegistries();
                     alert(`تم رفع الملف بنجاح! وتمت إضافة ${added} دكتور جديد للنظام.`);
                     updateAdminStats();
                     fileInput.value = '';
