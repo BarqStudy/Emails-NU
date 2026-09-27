@@ -71,6 +71,28 @@
         .dark .glass-surface  { background: rgba(30, 41, 59, 0.45) !important; border-color: rgba(255,255,255,0.08) !important; }
         .light .glass-surface { background: rgba(255, 255, 255, 0.45) !important; border-color: rgba(226,232,240,0.7) !important; }
 
+        /* في الوضع النهاري فقط: خلفية بطاقة العضو ونموذج التقييم بيضاء صلبة بدل الزجاج الشفاف */
+        .light #doctorCardBox .glass-card,
+        .light #ratingFormBox .glass-card {
+            background: #ffffff !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+
+        /* في الوضع النهاري فقط: نافذة اختيار الكليات/التخصصات/الأعضاء (أعضاء هيئة التدريس + تقييم الدكاترة) بخلفية بيضاء واضحة وأزرار رمادية مميزة بدل الرمادي الزجاجي الموحد */
+        .light #modalCategory .glass-card {
+            background: #ffffff !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        .light #modalCategory .glass-surface:not(.bg-amber-500\/10) {
+            background: #eef1f6 !important;
+            border-color: #e2e8f0 !important;
+            backdrop-filter: none !important;
+            -webkit-backdrop-filter: none !important;
+        }
+        .light #modalCategory .glass-surface:not(.bg-amber-500\/10) .text-slate-400 { color: #64748b !important; }
+
         .interactive-icon { transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .icon-svg { width: 1em; height: 1em; display: inline-block; vertical-align: -0.15em; flex-shrink: 0; margin-inline-end: 0.3em; }
 
@@ -225,7 +247,7 @@
             <div class="inline-block p-2 rounded-3xl glass-card logo-glow">
                 <img id="mainLogo" src="data:image/webp;base64,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" alt="شعار المنصة" class="w-16 h-16 object-contain rounded-2xl interactive-icon">
             </div>
-            <h1 id="userName" class="text-xl font-bold tracking-tight">هلا بمهندس المستقبل</h1>
+            <h1 id="userName" class="text-xl font-bold tracking-tight">أهلاً بك</h1>
             <div class="inline-block px-4 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 dark:text-blue-400 text-xs font-bold" dir="ltr">
                 <span id="userHandle">Emails_User</span>
             </div>
@@ -359,11 +381,14 @@
     <!-- صفحة المطور -->
     <div id="page-developer" class="page-scroll hidden"><div class="page-content-scroll page-developer-content">
 
+        <div class="flex items-center gap-2">
+            <button onclick="switchTab('home')" class="w-9 h-9 rounded-xl glass-surface bg-slate-100 dark:bg-slate-800/40 flex items-center justify-center text-sm">→</button>
+            <h2 class="text-lg font-bold">عن المنصة والمطور</h2>
+        </div>
         <div class="text-center space-y-4">
             <div class="w-20 h-20 mx-auto rounded-3xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-4xl interactive-icon">
                 <svg class="icon-svg icon-only" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M18 5a2 2 0 0 1 2 2v8.526a2 2 0 0 0 .212.897l1.068 2.127a1 1 0 0 1-.9 1.45H3.62a1 1 0 0 1-.9-1.45l1.068-2.127A2 2 0 0 0 4 15.526V7a2 2 0 0 1 2-2z" /><path d="M20.054 15.987H3.946" /></svg>
             </div>
-            <h2 class="text-xl font-bold">عن المنصة والمطور</h2>
             <div class="glass-card p-6 rounded-3xl text-sm leading-relaxed space-y-4 shadow-lg text-slate-600 dark:text-slate-300">
                 <p>تم تطوير منصة <strong>دليل أعضاء هيئة التدريس</strong> من قبل إدارة كلية الهندسة لتسهيل الوصول إلى البريد الإلكتروني والبيانات الأكاديمية.</p>
                 <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
@@ -381,6 +406,10 @@
     <!-- صفحة الكليات المضافة -->
     <div id="page-leaderboard" class="page-scroll hidden"><div class="page-content-scroll page-leaderboard-content">
 
+        <div class="flex items-center gap-2">
+            <button onclick="switchTab('home')" class="w-9 h-9 rounded-xl glass-surface bg-slate-100 dark:bg-slate-800/40 flex items-center justify-center text-sm">→</button>
+            <h2 class="text-lg font-bold">رجوع للرئيسية</h2>
+        </div>
         <div class="text-center pt-2">
             <h2 id="lbTitle" class="text-xl font-bold"><i class="fa-solid fa-building-columns icon-svg icon-only" aria-hidden="true"></i> كليات الجامعة</h2>
             <p id="lbSubtitle" class="text-xs text-slate-400">الكليات المضافة تلقائيًا من بيانات أعضاء هيئة التدريس</p>
@@ -395,6 +424,10 @@
     <!-- لوحة تحكم الإدارة -->
     <div id="page-admin" class="page-scroll hidden"><div class="page-content-scroll page-admin-content">
 
+        <div class="flex items-center gap-2">
+            <button onclick="switchTab('home')" class="w-9 h-9 rounded-xl glass-surface bg-slate-100 dark:bg-slate-800/40 flex items-center justify-center text-sm">→</button>
+            <h2 class="text-lg font-bold">رجوع للرئيسية</h2>
+        </div>
         <div class="text-center pt-2">
             <h2 class="text-xl font-bold text-blue-500"><svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M9.671 4.136a2.34 2.34 0 0 1 4.659 0 2.34 2.34 0 0 0 3.319 1.915 2.34 2.34 0 0 1 2.33 4.033 2.34 2.34 0 0 0 0 3.831 2.34 2.34 0 0 1-2.33 4.033 2.34 2.34 0 0 0-3.319 1.915 2.34 2.34 0 0 1-4.659 0 2.34 2.34 0 0 0-3.32-1.915 2.34 2.34 0 0 1-2.33-4.033 2.34 2.34 0 0 0 0-3.831A2.34 2.34 0 0 1 6.35 6.051a2.34 2.34 0 0 0 3.319-1.915" /><circle cx="12" cy="12" r="3" /></svg> لوحة تحكم الإدارة</h2>
             <p class="text-xs text-slate-400">نظام الإحصائيات، المشرفين، الحظر، ورفع الإكسل</p>
@@ -504,16 +537,16 @@
             </h3>
             <p class="text-[10px] text-slate-400 leading-relaxed">
                 كل سطر = دكتور واحد، بهذا الترتيب:
-                <span class="text-blue-500 font-bold">الاسم | الايميل | الكلية | الرتبة | التخصص | رقم المكتب</span><br>
-                التخصص ورقم المكتب اختياريان، والاسم والإيميل والكلية والرتبة هي البيانات الأساسية. افصل بين الحقول بـ <b>Tab</b> (نسخ مباشر من إكسل) أو <b>|</b> أو <b>فاصلة</b>. الاسم والإيميل إلزاميان، والباقي اختياري.
+                <span class="text-blue-500 font-bold">الاسم | الايميل | الرتبة | الكلية | التخصص | رقم المكتب</span><br>
+                الاسم والإيميل والكلية هي البيانات الأساسية، أما الرتبة والتخصص ورقم المكتب فجميعها اختيارية. افصل بين الحقول بـ <b>Tab</b> (نسخ مباشر من إكسل) أو <b>|</b> أو <b>فاصلة</b>.
                 إذا كان الدكتور رئيس قسم لأي تخصص هندسي، اكتب ذلك ضمن خانة الرتبة (مثال: "أستاذ مشارك - رئيس قسم") ليظهر بلونه المميز تلقائياً.
             </p>
             <textarea id="bulkAddInput" rows="7" dir="auto" spellcheck="false"
-                placeholder="د. أحمد القحطاني | ahmad@nu.edu.sa | كلية الهندسة | أستاذ مشارك - رئيس قسم | هندسة مدنية | مكتب 214&#10;د. سارة الحارثي | sara@nu.edu.sa | كلية الطب | أستاذ مساعد | أحياء دقيقة | مكتب 108"
+                placeholder="د. أحمد القحطاني | ahmad@nu.edu.sa | أستاذ مشارك - رئيس قسم | كلية الهندسة | هندسة مدنية | مكتب 214&#10;د. سارة الحارثي | sara@nu.edu.sa | أستاذ مساعد | كلية الطب | أحياء دقيقة | مكتب 108"
                 class="w-full p-3 rounded-xl glass-surface bg-slate-100 dark:bg-slate-900 border border-slate-300 dark:border-slate-800 text-[11px] font-mono leading-relaxed focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
             <div class="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 space-y-2">
                 <p class="text-[10px] text-slate-400 leading-relaxed">
-                    أو أضف الدكاترة من ملف Excel بنفس الهيكلة: <span class="text-emerald-500 font-bold">الاسم | الايميل | الكلية | الرتبة | التخصص | رقم المكتب</span><br><span class="text-slate-400">التخصص ورقم المكتب اختياريان.</span>
+                    أو أضف الدكاترة من ملف Excel بنفس الهيكلة: <span class="text-emerald-500 font-bold">الاسم | الايميل | الرتبة | الكلية | التخصص | رقم المكتب</span><br><span class="text-slate-400">الرتبة والتخصص ورقم المكتب اختيارية.</span>
                 </p>
                 <input id="bulkExcelFile" type="file" accept=".xlsx,.xls" class="w-full text-[11px] text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-emerald-500 file:text-white file:font-bold">
                 <button onclick="handleExcelBulkAdd()" class="w-full py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs shadow hover:bg-emerald-600 transition">
@@ -684,7 +717,7 @@
             throw new Error('User Banned');
         }
 
-        document.getElementById('userName').innerText = 'هلا بمهندس المستقبل';
+        document.getElementById('userName').innerText = 'أهلاً بكـ ' + (currentUser.name || currentUser.handle || '');
         document.getElementById('userHandle').innerText = currentUser.handle;
 
         function openExcelPicker() {
@@ -1151,7 +1184,8 @@ function renderCollegeAdminsList() {
 
             let isRate = state.mode === 'rate';
             let catLabel = isRate ? 'تقييم الدكاترة' : (state.cat === 'head' ? 'عمداء الكليات' : 'أعضاء هيئة التدريس');
-            backBtn.classList.toggle('hidden', modalStack.length <= 1);
+            // زر الرجوع يظهر دائماً بمجرد الدخول لأي مستوى (كليات/تخصصات/أعضاء)، ويعمل كرجوع خطوة أو إغلاق إن كنا بالمستوى الأول
+            backBtn.classList.remove('hidden');
 
             let pool = doctors.filter(d => d.category === state.cat);
             let categoryColleges = uniq(pool.map(d => d.college));
@@ -1605,7 +1639,16 @@ function makeRow(icon, title, sub, i, onClick, highlight) {
         }
 
         function renderLeaderboard(){let list=document.getElementById('leaderboardList');if(!list)return;document.getElementById('lbTitle').innerHTML='<svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" /><path d="M22 10v6" /><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" /></svg> كليات الجامعة';document.getElementById('lbSubtitle').innerText='تُضاف تلقائيًا عند رفع بيانات أعضاء هيئة التدريس';let cs=uniq(doctors.map(d=>(d.college||'').trim()).filter(Boolean));list.innerHTML=cs.length?cs.map(c=>{let count=doctors.filter(d=>d.category==='doctor'&&d.college===c).length;return `<button onclick='openCollegeFromUniversity(${JSON.stringify(c)})' class="w-full glass-card p-4 rounded-3xl border border-blue-500/20 flex items-center justify-between text-right hover:border-blue-500/50 hover:scale-[1.01] transition shadow-lg"><div class="flex items-center gap-3"><span class="icon-3d w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-2xl"><svg class="icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z" /><path d="M22 10v6" /><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5" /></svg></span><div><div class="font-bold text-sm">${escapeHtml(c)}</div><div class="text-[10px] text-slate-400">${count} عضو هيئة تدريس</div></div></div><span class="text-slate-400">←</span></button>`}).join(''):'<div class="glass-card rounded-3xl p-8 text-center text-xs text-slate-400">لا توجد كليات مضافة بعد. ارفع ملف أعضاء هيئة التدريس لإضافتها تلقائيًا.</div>';}
-function openCollegeFromUniversity(college){modalStack=[{view:'colleges',cat:'doctor',mode:'browse',focusCollege:college}];renderModal();document.getElementById('modalCategory').classList.remove('hidden');}
+function openCollegeFromUniversity(college){
+    // من صفحة كليات الجامعة: الكلية مُختارة مسبقاً، فننتقل مباشرة إلى تخصصاتها (أو أعضائها إن لم توجد تخصصات)
+    let inCollege = doctors.filter(d => d.category === 'doctor' && d.college === college);
+    let majors = collegeMajors(college, inCollege);
+    modalStack = majors.length > 0
+        ? [{ view: 'majors', cat: 'doctor', college: college, mode: 'browse' }]
+        : [{ view: 'people', cat: 'doctor', college: college, mode: 'browse' }];
+    renderModal();
+    document.getElementById('modalCategory').classList.remove('hidden');
+}
 syncLeaderboardConfig();
 
         /* ============================================================
@@ -1745,7 +1788,8 @@ syncLeaderboardConfig();
 
         /* ============================================================
            1) الإضافة الجماعية للدكاترة
-           الهيكلة: الاسم | الايميل | الكلية | الرتبة | التخصص
+           الهيكلة: الاسم | الايميل | الرتبة | الكلية | التخصص | رقم المكتب
+           (الرتبة والتخصص ورقم المكتب اختيارية)
            ============================================================ */
         function splitBulkLine(line) {
             if (line.includes('\t')) return line.split('\t');
@@ -1774,7 +1818,7 @@ syncLeaderboardConfig();
                     if (!rows.length) { alert('ملف Excel فارغ'); return; }
 
                     // نفس هيكلة الإضافة الجماعية الحالية تماماً:
-                    // الاسم | الايميل | الكلية | الرتبة | التخصص | رقم المكتب
+                    // الاسم | الايميل | الرتبة | الكلية | التخصص | رقم المكتب
                     const lines = rows.map(row => row.slice(0, 6).map(v => String(v ?? '').trim()).join('	'));
                     document.getElementById('bulkAddInput').value = lines.join('\n');
                     handleBulkAdd();
@@ -1805,9 +1849,9 @@ syncLeaderboardConfig();
                 if (i === 0 && /الاسم/.test(line) && /(الايميل|الإيميل|البريد)/.test(line)) return;
 
                 let parts = splitBulkLine(line).map(p => p.trim());
-                let [name, email, college, rank, major, office] = [parts[0] || '', parts[1] || '', parts[2] || '', parts[3] || '', parts[4] || '', parts[5] || ''];
+                let [name, email, rank, college, major, office] = [parts[0] || '', parts[1] || '', parts[2] || '', parts[3] || '', parts[4] || '', parts[5] || ''];
 
-                if (!name || !email) { errors.push(`سطر ${i + 1}: ينقصه الاسم أو الإيميل`); return; }
+                if (!name || !email || !college) { errors.push(`سطر ${i + 1}: ينقصه الاسم أو الإيميل أو الكلية`); return; }
                 if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { errors.push(`سطر ${i + 1}: صيغة الإيميل غير صحيحة (${escapeHtml(email)})`); return; }
                 if (skipDup && existingEmails.has(email.toLowerCase())) { skipped++; return; }
 
