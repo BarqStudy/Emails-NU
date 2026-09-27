@@ -896,6 +896,53 @@
             }
         }
 
+        /* ============================================================
+           إصلاح تلقائي لسجلات قديمة انعكست فيها خانتا "الكلية" و"الرتبة"
+           (بسبب ترتيب أعمدة كان مستخدماً سابقاً) — يجعل خانة "الكلية" تحتوي
+           اسم كلية حقيقي دائماً بدل رتبة أكاديمية مثل "أستاذ مشارك" أو "رئيس قسم"
+           ============================================================ */
+        function isRankLikeText(t) { return /أستاذ|محاضر|معيد|رئيس\s*قسم|رئيسة\s*قسم|عميد|وكيل/.test(t || ''); }
+        function isCollegeLikeText(t) { return /^كلية\b/.test(String(t || '').trim()); }
+        function fixSwappedRankCollegeFields(list) {
+            let changed = false;
+            list.forEach(d => {
+                let col = (d.college || '').trim();
+                let rk  = (d.rank || '').trim();
+                if (!col) return;
+                let colLooksLikeRank = isRankLikeText(col) && !isCollegeLikeText(col);
+                if (!colLooksLikeRank) return;
+                if (isCollegeLikeText(rk)) {
+                    // الكلية والرتبة منعكستان: بادلهما
+                    d.college = rk;
+                    d.rank = col;
+                    changed = true;
+                } else if (!rk) {
+                    // لا توجد كلية حقيقية مسجّلة: انقل النص إلى خانة الرتبة وأفرغ الكلية
+                    d.rank = col;
+                    d.college = '';
+                    changed = true;
+                }
+            });
+            return changed;
+        }
+        (function cleanupRankAsCollegeData() {
+            let changedDoctors = fixSwappedRankCollegeFields(doctors);
+            let changedRegs = false;
+            if (Array.isArray(collegesReg)) {
+                let filtered = collegesReg.filter(c => isCollegeLikeText(c) || !isRankLikeText(c));
+                if (filtered.length !== collegesReg.length) { collegesReg = filtered; changedRegs = true; }
+            }
+            if (majorsReg && typeof majorsReg === 'object') {
+                Object.keys(majorsReg).forEach(k => {
+                    if (isRankLikeText(k) && !isCollegeLikeText(k)) { delete majorsReg[k]; changedRegs = true; }
+                });
+            }
+            // أعد تسجيل الكليات/التخصصات الصحيحة من بيانات الدكاترة بعد التصحيح
+            doctors.forEach(d => { if (d.category === 'doctor') registerCollegeMajor(d.college, d.major); });
+            if (changedDoctors) localStorage.setItem('najran_doctors', JSON.stringify(doctors));
+            if (changedRegs || changedDoctors) saveRegistries();
+        })();
+
         let usersStats = JSON.parse(localStorage.getItem('najran_users_stats')) || {};
         if (!usersStats[currentUser.id]) usersStats[currentUser.id] = { name: currentUser.name, handle: currentUser.handle, searches: 0 };
         usersStats[currentUser.id].name = currentUser.name;
